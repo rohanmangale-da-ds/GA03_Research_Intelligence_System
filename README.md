@@ -1,0 +1,1 @@
+load pdf/txt -> chunking -> embedding -> rag-chain -> tavily -> ui

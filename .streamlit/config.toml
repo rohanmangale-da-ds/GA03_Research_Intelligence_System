@@ -1,0 +1,14 @@
+[theme]
+primaryColor = "#309bffff"              
+backgroundColor = "#FFFFFF"          # Pure white background
+secondaryBackgroundColor = "#F7F7F8" # Light gray panels
+textColor = "#0F172A"                # Dark readable text
+font = "sans serif"
+
+
+[client]
+showErrorDetails = true
+
+[logger]
+level = "info"
+
