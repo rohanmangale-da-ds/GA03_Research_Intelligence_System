@@ -4,30 +4,33 @@
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## 🤖 Research Intelligence RAG Chatbot
 
-An AI-powered Research Assistant that allows users to upload documents and interact with them using Retrieval-Augmented Generation (RAG).
+An AI-powered Research Intelligence System that allows users to upload documents and interact with them using Retrieval-Augmented Generation (RAG) — enhanced with optional real-time web search via Tavily.
 
-This system enables intelligent document understanding by combining semantic search, vector embeddings, and LLM-based reasoning — all inside a clean and interactive Streamlit interface.
+The system intelligently combines local document knowledge with fresh web information to deliver accurate, contextual, and well-reasoned answers through a clean Streamlit chat interface.
 
 ## 📸 Screenshots
 1. User Interface (UI)
-<img width="1910" height="962" alt="image" src="https://github.com/user-attachments/assets/5b20fba0-fd19-413b-bb68-a1d3529061ca" />
+<img width="1897" height="914" alt="image" src="https://github.com/user-attachments/assets/cf234560-5c57-4ec7-ade2-7f0fec098c44" />
 
 2. Extracting Information from Documents
-<img width="1912" height="959" alt="image" src="https://github.com/user-attachments/assets/89003453-f533-4de2-ac1c-e50c201685d3" />
+<img width="1898" height="927" alt="image" src="https://github.com/user-attachments/assets/53b57b20-efbd-42cb-b435-9153b7505498" />
 
-3. AI-Powered Question Answering from Documents
-<img width="1914" height="959" alt="image" src="https://github.com/user-attachments/assets/b64a1cc9-450e-46b9-9c98-0cded798c852" />
+3. Hybrid RAG: Documents + Web Search (Wikipedia & Web Sources)
+<img width="1897" height="919" alt="image" src="https://github.com/user-attachments/assets/4e2bd933-9a3c-4512-b369-b7866e5349c8" />
+
 
 
 ### ✨ Key Features
 
 ✔ Upload and analyze multiple documents (PDF / TXT)
-✔ Ask natural language questions about uploaded documents
-✔ Uses Retrieval-Augmented Generation (RAG)
-✔ Fast semantic search using FAISS
-✔ Clean and modern Streamlit UI
-✔ Modular, scalable, and production-ready architecture
-✔ Designed for research, legal, academic, and enterprise use cases
+✔ Ask natural-language questions over uploaded documents
+✔ Hybrid RAG: Document search + optional Tavily web search
+✔ Fast semantic retrieval using FAISS
+✔ Real-time web augmentation (Wikipedia & trusted sources)
+✔ Streaming, ChatGPT-like responses
+✔ Clean, modern Streamlit UI
+✔ Modular, scalable, production-style architecture
+✔ Suitable for research, legal, academic, and enterprise use cases
 
 
 ### 💡 Tech Stack
@@ -39,6 +42,7 @@ This system enables intelligent document understanding by combining semantic sea
 5. Backend ->	Python
 6. Configuration ->	.env, settings.py
 7. Architecture ->	Modular & Scalable
+8. Web Search -> Tavily API
 
 ### 📁 Project Structure
 
@@ -50,78 +54,82 @@ GA03_Research_Intelligence_System/
 │
 ├── config/
 │   ├── __init__.py
-│   └── settings.py              # Centralized configuration
+│   └── settings.py              # Centralized configuration & secrets
 │
 ├── core/
 │   ├── chain.py                 # RAG pipeline logic
-│   ├── document_processor.py    # Document parsing & chunking
+│   ├── document_processor.py    # PDF/TXT parsing & chunking
 │   ├── embeddings.py            # Embedding generation
-│   └── vector_store.py          # FAISS vector store
+│   └── vector_store.py          # FAISS vector store manager
+│
+├── tools/
+│   └── tavily_search.py         # Tavily web search integration
 │
 ├── ui/
-│   ├── chat_interface.py        # Chat UI logic
-│   └── components.py            # Reusable UI components
+│   ├── chat_interface.py        # Chat orchestration logic
+│   └── components.py            # Reusable Streamlit components
 │
 ├── data/
 │   └── input_data/              # Uploaded documents
 │
 ├── app.py                       # Streamlit entry point
-├── main.py                      # CLI entry (optional)
+├── main.py                      # Optional CLI entry
 ├── requirements.txt
 ├── pyproject.toml
 ├── .env                         # Environment variables (ignored)
 ├── .gitignore
 └── README.md
+
 ```
 
-### ⚙️ How It Works (High Level)
+### ⚙️ How It Works (High-Level)
 1️⃣ Document Upload
 
-Users upload PDF or TXT documents through the Streamlit interface.
+Users upload PDF or TXT documents through the Streamlit UI.
 
 2️⃣ Chunking & Embedding
 
 Uploaded documents are:
 
-Split into meaningful chunks
+Split into semantically meaningful chunks
 
 Converted into vector embeddings using Sentence Transformers
 
 3️⃣ Vector Storage
 
-All embeddings are stored in a FAISS vector database for efficient similarity search.
+All embeddings are stored in a FAISS vector database for fast similarity search.
 
-4️⃣ Query Processing
+4️⃣ Hybrid Query Processing
 
 When a user asks a question:
 
-Relevant document chunks are retrieved
+Relevant document chunks are retrieved from FAISS
 
-Context is injected into the LLM prompt
+Optional web search (Tavily) fetches fresh external knowledge
 
-A grounded, document-based response is generated
+Both contexts are merged intelligently
 
 5️⃣ Response Generation
 
-The system produces:
+The LLM generates:
 
-Accurate answers
+Accurate, grounded answers
 
 Context-aware explanations
 
-Source-backed responses
+Source-backed responses (documents + web)
 
-### 🚀 Ideal Use Cases
+🚀 Ideal Use Cases
 
 Academic research assistance
 
-Legal document analysis
+Legal & policy document analysis
 
 Technical documentation Q&A
 
 Knowledge base exploration
 
-Enterprise document intelligence
+Enterprise research intelligence tools
 
 ### 🛠️ Setup Instructions
 1️⃣ Clone Repository
@@ -130,7 +138,7 @@ cd GA03_Research_Intelligence_System
 
 2️⃣ Create Virtual Environment
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 
 3️⃣ Install Dependencies
 pip install -r requirements.txt
@@ -139,10 +147,12 @@ pip install -r requirements.txt
 
 Create a .env file:
 
-GROQ_API_KEY=your_api_key_here
+GROQ_API_KEY=your_groq_api_key
+TAVILY_API_KEY=your_tavily_api_key
 
 5️⃣ Run the App
 streamlit run app.py
+
 
 ### 🔒 Notes
 
@@ -150,4 +160,20 @@ streamlit run app.py
 
 API keys should never be committed
 
-The app works fully offline after document ingestion
+FAISS index is generated dynamically
+
+The app works offline after document ingestion
+
+Web search can be enabled or disabled per query
+
+### 🌟 Project Highlights 
+
+Demonstrates RAG + Hybrid Search
+
+Clean separation of concerns
+
+Real-world AI system design
+
+Production-style configuration handling
+
+ChatGPT-like UX with streaming responses
