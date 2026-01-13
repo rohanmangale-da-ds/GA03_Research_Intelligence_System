@@ -3,7 +3,7 @@ import streamlit as st
 # Import configuration and validate settings
 from config.settings import settings
 
-# Validate API keys before app starts
+# Validate API keys before anything else
 try:
     settings.validate()
 except ValueError as e:
@@ -18,6 +18,7 @@ from ui.components import (
     display_sidebar_info,
     display_file_uploader,
     display_processing_status,
+    create_web_search_toggle
 )
 from ui.chat_interface import ChatInterface
 
@@ -29,7 +30,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
 
 # Custom CSS for better appearance
 st.markdown("""
@@ -50,29 +50,33 @@ st.markdown("""
 
 
 def main():
-    """Main application entry point."""
-
+    """Main application function."""
+    
     # Initialize session state
     init_session_state()
-
-    # Initialize chat interface
+    
+    # Initialize chat interface (cached in session state)
     if "chat_interface" not in st.session_state:
         st.session_state.chat_interface = ChatInterface()
-
+    
     chat = st.session_state.chat_interface
-
-    # Sidebar
+    
+    
+    # Display sidebar
     display_sidebar_info()
-
-    # Title
+    
+    # Main content area
     st.title("🤖 AI Advocate RAG Chatbot", text_alignment="center")
-    st.markdown("Ask questions about your uploaded documents.")
-
+    
+    st.markdown("Chat with your documents using AI!")
+    
     # File upload section
     with st.expander("📤 Upload Documents", expanded=not st.session_state.vector_store_initialized):
         uploaded_files = display_file_uploader()
-
+        
         if uploaded_files:
+            # Process button
+            
             if st.button("🚀 Process Documents", type="secondary"):
                 with st.spinner("Processing documents..."):
                     try:
@@ -83,12 +87,15 @@ def main():
                         )
                     except Exception as e:
                         display_processing_status(f"❌ Error: {str(e)}", "error")
-
+    
+    # Web search toggle
+    use_web_search = create_web_search_toggle()
+    
     st.divider()
-
-    # Chat history
+    
+    # Display chat history
     display_chat_history()
-
+    
     # Chat input
     st.markdown("""
     <style>
@@ -102,21 +109,31 @@ def main():
     if prompt := st.chat_input("Ask a question about your documents..."):
         add_message("user", prompt)
 
+        
+        # Display user message
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        
+        # Generate and display assistant response
         with st.chat_message("assistant"):
             try:
+                # Stream the response
                 response = st.write_stream(
-                    chat.get_response(prompt)
+                    chat.get_response(prompt, use_web_search=use_web_search)
                 )
-
-                sources = chat.get_sources(prompt)
-
+                
+                # Get sources
+                sources = chat.get_sources(prompt, use_web_search=use_web_search)
+                
+                # Show sources if available
                 if sources:
                     with st.expander("📚 Sources"):
                         for source in sources:
                             st.write(f"- {source}")
-
+                
+                # Add assistant message to history
                 add_message("assistant", response, sources)
-
+                
             except Exception as e:
                 error_msg = f"❌ Error generating response: {str(e)}"
                 st.error(error_msg)
