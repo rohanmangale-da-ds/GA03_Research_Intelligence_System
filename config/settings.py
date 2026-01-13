@@ -22,6 +22,7 @@ class Settings:
     - Docker/Other: Environment variables
     """
     GROQ_API_KEY:str = os.getenv("GROQ_API_KEY")
+    TAVILY_API_KEY:str = os.getenv("TAVILY_API_KEY")
     LLM_MODEL:str = os.getenv("LLM_MODEL")
     LLM_TEMPERATURE:float =  float(os.getenv("LLM_TEMPERATURE", 0))
     EMBEDDING_MODEL:str = os.getenv("EMBEDDING_MODEL")
@@ -34,6 +35,9 @@ class Settings:
     def validate(self) -> bool:
         if not self.GROQ_API_KEY:
             raise ValueError("❌ GROQ_API_KEY not set")
+
+        if not self.TAVILY_API_KEY:
+            raise ValueError("❌ TAVILY_API_KEY not set")
 
         return True
 
